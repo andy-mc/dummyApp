@@ -74,3 +74,8 @@ typings/
 
 # FuseBox cache
 .fusebox/
+
+./public/dist/App.bundle.js
+./public/dist/App.bundle.js.map
+./public/dist/style.css
+./public/dist/style.css.map

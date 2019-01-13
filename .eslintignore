@@ -1,0 +1,3 @@
+*.bundle.js
+starter-files/public/dist/App.bundle.js
+starter-files/public/dist/App.bundle.js.map

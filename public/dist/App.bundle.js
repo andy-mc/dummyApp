@@ -6,9 +6,9 @@
 /******/ 	function __webpack_require__(moduleId) {
 /******/
 /******/ 		// Check if module is in cache
-/******/ 		if(installedModules[moduleId])
+/******/ 		if(installedModules[moduleId]) {
 /******/ 			return installedModules[moduleId].exports;
-/******/
+/******/ 		}
 /******/ 		// Create a new module (and put it into the cache)
 /******/ 		var module = installedModules[moduleId] = {
 /******/ 			i: moduleId,
@@ -931,6 +931,12 @@ process.off = noop;
 process.removeListener = noop;
 process.removeAllListeners = noop;
 process.emit = noop;
+process.prependListener = noop;
+process.prependOnceListener = noop;
+
+process.listeners = function (name) {
+    return [];
+};
 
 process.binding = function (name) {
     throw new Error('process.binding is not supported');
@@ -2014,7 +2020,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
      * Version label, exposed for easier checks
      * if DOMPurify is up to date or not
      */
-    DOMPurify.version = '0.8.5';
+    DOMPurify.version = '0.8.9';
 
     /**
      * Array of elements that DOMPurify removed during sanitation.
@@ -2039,6 +2045,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     var Text = window.Text;
     var Comment = window.Comment;
     var DOMParser = window.DOMParser;
+    var useDOMParser = false; // See comment below
 
     // As per issue #47, the web-components registry is inherited by a
     // new document created via createHTMLDocument. As per the spec
@@ -2118,7 +2125,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     var DEFAULT_ALLOWED_ATTR = _addToSet({}, [
 
     // HTML
-    'accept', 'action', 'align', 'alt', 'autocomplete', 'background', 'bgcolor', 'border', 'cellpadding', 'cellspacing', 'checked', 'cite', 'class', 'clear', 'color', 'cols', 'colspan', 'coords', 'datetime', 'default', 'dir', 'disabled', 'download', 'enctype', 'face', 'for', 'headers', 'height', 'hidden', 'high', 'href', 'hreflang', 'id', 'ismap', 'label', 'lang', 'list', 'loop', 'low', 'max', 'maxlength', 'media', 'method', 'min', 'multiple', 'name', 'noshade', 'novalidate', 'nowrap', 'open', 'optimum', 'pattern', 'placeholder', 'poster', 'preload', 'pubdate', 'radiogroup', 'readonly', 'rel', 'required', 'rev', 'reversed', 'rows', 'rowspan', 'spellcheck', 'scope', 'selected', 'shape', 'size', 'span', 'srclang', 'start', 'src', 'step', 'style', 'summary', 'tabindex', 'title', 'type', 'usemap', 'valign', 'value', 'width', 'xmlns',
+    'accept', 'action', 'align', 'alt', 'autocomplete', 'background', 'bgcolor', 'border', 'cellpadding', 'cellspacing', 'checked', 'cite', 'class', 'clear', 'color', 'cols', 'colspan', 'coords', 'datetime', 'default', 'dir', 'disabled', 'download', 'enctype', 'face', 'for', 'headers', 'height', 'hidden', 'high', 'href', 'hreflang', 'id', 'ismap', 'label', 'lang', 'list', 'loop', 'low', 'max', 'maxlength', 'media', 'method', 'min', 'multiple', 'name', 'noshade', 'novalidate', 'nowrap', 'open', 'optimum', 'pattern', 'placeholder', 'poster', 'preload', 'pubdate', 'radiogroup', 'readonly', 'rel', 'required', 'rev', 'reversed', 'role', 'rows', 'rowspan', 'spellcheck', 'scope', 'selected', 'shape', 'size', 'span', 'srclang', 'start', 'src', 'step', 'style', 'summary', 'tabindex', 'title', 'type', 'usemap', 'valign', 'value', 'width', 'xmlns',
 
     // SVG
     'accent-height', 'accumulate', 'additivive', 'alignment-baseline', 'ascent', 'attributename', 'attributetype', 'azimuth', 'basefrequency', 'baseline-shift', 'begin', 'bias', 'by', 'clip', 'clip-path', 'clip-rule', 'color', 'color-interpolation', 'color-interpolation-filters', 'color-profile', 'color-rendering', 'cx', 'cy', 'd', 'dx', 'dy', 'diffuseconstant', 'direction', 'display', 'divisor', 'dur', 'edgemode', 'elevation', 'end', 'fill', 'fill-opacity', 'fill-rule', 'filter', 'flood-color', 'flood-opacity', 'font-family', 'font-size', 'font-size-adjust', 'font-stretch', 'font-style', 'font-variant', 'font-weight', 'fx', 'fy', 'g1', 'g2', 'glyph-name', 'glyphref', 'gradientunits', 'gradienttransform', 'image-rendering', 'in', 'in2', 'k', 'k1', 'k2', 'k3', 'k4', 'kerning', 'keypoints', 'keysplines', 'keytimes', 'lengthadjust', 'letter-spacing', 'kernelmatrix', 'kernelunitlength', 'lighting-color', 'local', 'marker-end', 'marker-mid', 'marker-start', 'markerheight', 'markerunits', 'markerwidth', 'maskcontentunits', 'maskunits', 'max', 'mask', 'mode', 'min', 'numoctaves', 'offset', 'operator', 'opacity', 'order', 'orient', 'orientation', 'origin', 'overflow', 'paint-order', 'path', 'pathlength', 'patterncontentunits', 'patterntransform', 'patternunits', 'points', 'preservealpha', 'r', 'rx', 'ry', 'radius', 'refx', 'refy', 'repeatcount', 'repeatdur', 'restart', 'result', 'rotate', 'scale', 'seed', 'shape-rendering', 'specularconstant', 'specularexponent', 'spreadmethod', 'stddeviation', 'stitchtiles', 'stop-color', 'stop-opacity', 'stroke-dasharray', 'stroke-dashoffset', 'stroke-linecap', 'stroke-linejoin', 'stroke-miterlimit', 'stroke-opacity', 'stroke', 'stroke-width', 'surfacescale', 'targetx', 'targety', 'transform', 'text-anchor', 'text-decoration', 'text-rendering', 'textlength', 'u1', 'u2', 'unicode', 'values', 'viewbox', 'visibility', 'vert-adv-y', 'vert-origin-x', 'vert-origin-y', 'word-spacing', 'wrap', 'writing-mode', 'xchannelselector', 'ychannelselector', 'x', 'x1', 'x2', 'y', 'y1', 'y2', 'z', 'zoomandpan',
@@ -2134,6 +2141,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     /* Explicitly forbidden attributes (overrides ALLOWED_ATTR/ADD_ATTR) */
     var FORBID_ATTR = null;
+
+    /* Decide if ARIA attributes are okay */
+    var ALLOW_ARIA_ATTR = true;
 
     /* Decide if custom data attributes are okay */
     var ALLOW_DATA_ATTR = true;
@@ -2156,6 +2166,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     /* Decide if document with <html>... should be returned */
     var WHOLE_DOCUMENT = false;
 
+    /* Decide if all elements (e.g. style, script) must be children of
+     * document.body. By default, browsers might move them to document.head */
+    var FORCE_BODY = false;
+
     /* Decide if a DOM `HTMLBodyElement` should be returned, instead of a html string.
      * If `WHOLE_DOCUMENT` is enabled a `HTMLHtmlElement` will be returned instead
      */
@@ -2177,10 +2191,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     var KEEP_CONTENT = true;
 
     /* Tags to ignore content of when KEEP_CONTENT is true */
-    var FORBID_CONTENTS = _addToSet({}, ['audio', 'head', 'math', 'script', 'style', 'svg', 'video']);
+    var FORBID_CONTENTS = _addToSet({}, ['audio', 'head', 'math', 'script', 'style', 'template', 'svg', 'video']);
 
     /* Tags that are safe for data: URIs */
-    var DATA_URI_TAGS = _addToSet({}, ['audio', 'video', 'img', 'source']);
+    var DATA_URI_TAGS = _addToSet({}, ['audio', 'video', 'img', 'source', 'image']);
 
     /* Attributes safe for values like "javascript:" */
     var URI_SAFE_ATTRIBUTES = _addToSet({}, ['alt', 'class', 'for', 'id', 'label', 'name', 'pattern', 'placeholder', 'summary', 'title', 'value', 'style', 'xmlns']);
@@ -2209,6 +2223,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         ALLOWED_ATTR = 'ALLOWED_ATTR' in cfg ? _addToSet({}, cfg.ALLOWED_ATTR) : DEFAULT_ALLOWED_ATTR;
         FORBID_TAGS = 'FORBID_TAGS' in cfg ? _addToSet({}, cfg.FORBID_TAGS) : {};
         FORBID_ATTR = 'FORBID_ATTR' in cfg ? _addToSet({}, cfg.FORBID_ATTR) : {};
+        ALLOW_ARIA_ATTR = cfg.ALLOW_ARIA_ATTR !== false; // Default true
         ALLOW_DATA_ATTR = cfg.ALLOW_DATA_ATTR !== false; // Default true
         ALLOW_UNKNOWN_PROTOCOLS = cfg.ALLOW_UNKNOWN_PROTOCOLS || false; // Default false
         SAFE_FOR_JQUERY = cfg.SAFE_FOR_JQUERY || false; // Default false
@@ -2217,6 +2232,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         RETURN_DOM = cfg.RETURN_DOM || false; // Default false
         RETURN_DOM_FRAGMENT = cfg.RETURN_DOM_FRAGMENT || false; // Default false
         RETURN_DOM_IMPORT = cfg.RETURN_DOM_IMPORT || false; // Default false
+        FORCE_BODY = cfg.FORCE_BODY || false; // Default false
         SANITIZE_DOM = cfg.SANITIZE_DOM !== false; // Default true
         KEEP_CONTENT = cfg.KEEP_CONTENT !== false; // Default true
 
@@ -2294,15 +2310,23 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       * @return a DOM, filled with the dirty markup
       */
     var _initDocument = function _initDocument(dirty) {
-        /* Create a HTML document using DOMParser */
+        /* Create a HTML document */
         var doc, body;
-        try {
-            doc = new DOMParser().parseFromString(dirty, 'text/html');
-        } catch (e) {}
 
-        /* Some browsers throw, some browsers return null for the code above
-           DOMParser with text/html support is only in very recent browsers.
-           See #159 why the check here is extra-thorough */
+        /* Fill body with bogus element */
+        if (FORCE_BODY) {
+            dirty = '<remove></remove>' + dirty;
+        }
+
+        /* Use DOMParser to workaround Firefox bug (see comment below) */
+        if (useDOMParser) {
+            try {
+                doc = new DOMParser().parseFromString(dirty, 'text/html');
+            } catch (e) {}
+        }
+
+        /* Otherwise use createHTMLDocument, because DOMParser is unsafe in
+           Safari (see comment below) */
         if (!doc || !doc.documentElement) {
             doc = implementation.createHTMLDocument('');
             body = doc.body;
@@ -2311,11 +2335,30 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         }
 
         /* Work on whole document or just its body */
-        if (typeof doc.getElementsByTagName === 'function') {
-            return doc.getElementsByTagName(WHOLE_DOCUMENT ? 'html' : 'body')[0];
-        }
         return getElementsByTagName.call(doc, WHOLE_DOCUMENT ? 'html' : 'body')[0];
     };
+
+    // Safari 10.1+ (unfixed as of time of writing) has a catastrophic bug in
+    // its implementation of DOMParser such that the following executes the
+    // JavaScript:
+    //
+    // new DOMParser()
+    //   .parseFromString('<svg onload=alert(document.domain)>', 'text/html');
+    //
+    // However, Firefox uses a different parser for innerHTML rather than
+    // DOMParser (see https://bugzilla.mozilla.org/show_bug.cgi?id=1205631)
+    // which means that you *must* use DOMParser, otherwise the output may
+    // not be safe if used in a document.write context later.
+    //
+    // So we feature detect the Firefox bug and use the DOMParser if necessary.
+    if (DOMPurify.isSupported) {
+        (function () {
+            var doc = _initDocument('<svg><p><style><img src="</style><img src=x onerror=alert(1)//">');
+            if (doc.querySelector('svg img')) {
+                useDOMParser = true;
+            }
+        })();
+    }
 
     /**
      * _createIterator
@@ -2367,6 +2410,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
      */
     var _sanitizeElements = function _sanitizeElements(currentNode) {
         var tagName, content;
+
         /* Execute a hook if present */
         _executeHook('beforeSanitizeElements', currentNode, null);
 
@@ -2422,6 +2466,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     };
 
     var DATA_ATTR = /^data-[\-\w.\u00B7-\uFFFF]/;
+    var ARIA_ATTR = /^aria-[\-\w]+$/;
     var IS_ALLOWED_URI = /^(?:(?:(?:f|ht)tps?|mailto|tel):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i;
     var IS_SCRIPT_OR_DATA = /^(?:\w+script|data):/i;
     /* This needs to be extensive thanks to Webkit/Blink's behavior */
@@ -2484,10 +2529,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                 if (attributes.indexOf(idAttr) > l) {
                     currentNode.setAttribute('id', idAttr.value);
                 }
+            } else if (
+            // This works around a bug in Safari, where input[type=file]
+            // cannot be dynamically set after type has been removed
+            currentNode.nodeName === 'INPUT' && lcName === 'type' && value === 'file' && (ALLOWED_ATTR[lcName] || !FORBID_ATTR[lcName])) {
+                continue;
             } else {
                 // This avoids a crash in Safari v9.0 with double-ids.
                 // The trick is to first set the id to be empty and then to
-                // remove the attriubute
+                // remove the attribute
                 if (name === 'id') {
                     currentNode.setAttribute(name, '');
                 }
@@ -2514,7 +2564,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                (https://html.spec.whatwg.org/multipage/dom.html#embedding-custom-non-visible-data-with-the-data-*-attributes)
                XML-compatible (https://html.spec.whatwg.org/multipage/infrastructure.html#xml-compatible and http://www.w3.org/TR/xml/#d0e804)
                We don't need to check the value; it's always URI safe. */
-            if (ALLOW_DATA_ATTR && DATA_ATTR.test(lcName)) {}
+            if (ALLOW_DATA_ATTR && DATA_ATTR.test(lcName)) {
+                // This attribute is safe
+            } else if (ALLOW_ARIA_ATTR && ARIA_ATTR.test(lcName)) {}
             // This attribute is safe
 
             /* Otherwise, check the name is permitted */
@@ -2530,8 +2582,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                     else if (IS_ALLOWED_URI.test(value.replace(ATTR_WHITESPACE, ''))) {}
                         // This attribute is safe
 
-                        /* Keep image data URIs alive if src is allowed */
-                        else if (lcName === 'src' && value.indexOf('data:') === 0 && DATA_URI_TAGS[currentNode.nodeName.toLowerCase()]) {}
+                        /* Keep image data URIs alive if src/xlink:href is allowed */
+                        else if ((lcName === 'src' || lcName === 'xlink:href') && value.indexOf('data:') === 0 && DATA_URI_TAGS[currentNode.nodeName.toLowerCase()]) {}
                             // This attribute is safe
 
                             /* Allow unknown protocols: This provides support for links that
@@ -2679,6 +2731,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             if (!body) {
                 return RETURN_DOM ? null : '';
             }
+        }
+
+        /* Remove first element node (ours) if FORCE_BODY is set */
+        if (FORCE_BODY) {
+            _forceRemove(body.firstChild);
         }
 
         /* Get node iterator */

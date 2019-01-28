@@ -7,6 +7,12 @@ const reviewController = require('../controllers/reviewController');
 const tryControllers = require('../controllers/tryControllers');
 const { catchErrors } = require('../handlers/errorHandlers');
 
+router.get('/andy', (req, res) => {
+  res.render('andy', {
+    title: 'andy learning to code'
+  })
+})
+
 router.get('/', catchErrors(storeController.getStores));
 router.get('/stores', catchErrors(storeController.getStores));
 router.get('/stores/page/:page', catchErrors(storeController.getStores));

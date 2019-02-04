@@ -80,3 +80,6 @@ public/dist/App.bundle.js.map
 public/dist/style.css
 public/dist/style.css.map
 public/dist/App.bundle.js
+
+variables.env
+variables.env.now
